@@ -11,27 +11,27 @@ win_sound = pygame.mixer.Sound("win.wav")
 WIDTH, HEIGHT = 700, 500
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
-font = pygame.font.Font(None, 40)
-
 pygame.display.set_caption("Pong")
 
 start = time.time()
 
 class Player1:
-    def __init__(self, x, y, width, height, speed):
+    def __init__(self, x, y, width, height, speed, score):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
         self.speed = speed
+        self.score = score
 
 class Player2:
-    def __init__(self, x, y, width, height, speed):
+    def __init__(self, x, y, width, height, speed, score):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
         self.speed = speed
+        self.score = score
 
 class Ball:
     def __init__(self, x, y, r, v):
@@ -42,8 +42,8 @@ class Ball:
 
 font = pygame.font.Font(None, 30)
 
-p1 = Player1(0, 0, 8, 110, 7)
-p2 = Player2(692, 0, 8, 110, 7)
+p1 = Player1(0, 0, 8, 110, 7, 0)
+p2 = Player2(692, 0, 8, 110, 7, 0)
 ball = Ball(WIDTH//2, HEIGHT//2, 15, [5, 5])
 
 clock = pygame.time.Clock()
@@ -53,21 +53,19 @@ boosted = False
 alpha = 255
 
 while running:
-
     if alpha > 0 and time.time()-start >= 3:
         alpha -= 1
-    print(ball.v)
-    print(f"Coordinates: {ball.x, ball.y}")
-    print(f"P1 Coordinates: {p1.x, p1.y}")
-    print(f"P2 Coordinates: {p2.x, p2.y}")
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
     
+
+
     ball.x += ball.v[0]
     ball.y += ball.v[1]
     keys = pygame.key.get_pressed()
+
     if keys[pygame.K_w]:
         if p1.y > 0:
             p1.y -= p1.speed
@@ -119,7 +117,8 @@ while running:
         ball.x += ball.v[0]
         ball.y += ball.v[1]
 
-    if ball.x < 0 or ball.x > WIDTH:
+    if ball.x < 0:
+        p2.score += 1
         ball.x, ball.y = WIDTH//2, HEIGHT//2
         if boosted:
             ball.v[0] /= 2
@@ -127,12 +126,31 @@ while running:
             boosted = False
         ball.v = [random.choice([-5, 5]), random.choice([-5, 5])]
         pygame.mixer.Sound.play(win_sound)
+    elif ball.x > WIDTH:
+        p1.score += 1
+        ball.x, ball.y = WIDTH//2, HEIGHT//2
+        if boosted:
+            ball.v[0] /= 2
+            ball.v[1] /= 2
+            boosted = False
+        ball.v = [random.choice([-5, 5]), random.choice([-5, 5])]
+        pygame.mixer.Sound.play(win_sound)
+
     screen.fill((0, 0, 0))
     clock.tick(60)
 
     pygame.draw.rect(screen, (255, 255, 255), (p1.x, p1.y, p1.width, p1.height))
     pygame.draw.rect(screen, (255, 255, 255), (p2.x, p2.y, p2.width, p2.height))
     pygame.draw.circle(screen, (255, 255, 255), (ball.x, ball.y), ball.r)
+
+    for i in range(1, 25, 2):
+        pygame.draw.line(screen, (255, 255, 255), (WIDTH//2, 20*i), (WIDTH//2, 20*i+30), 3)
+
+    score_font = pygame.font.Font(None, 100)
+    p1_score = score_font.render(str(p1.score), True, (255, 255, 255))
+    p2_score = score_font.render(str(p2.score), True, (255, 255, 255))
+    screen.blit(p1_score, (175, 200))
+    screen.blit(p2_score, (550, 200))
 
     message = font.render("Press space while hitting for a boost!", True, (255, 255, 255))
     faded_message = message.copy()
