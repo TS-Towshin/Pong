@@ -42,9 +42,11 @@ class Ball:
 
 font = pygame.font.Font(None, 30)
 
-p1 = Player1(0, 0, 8, 110, 7, 0)
-p2 = Player2(692, 0, 8, 110, 7, 0)
+p1 = Player1(0, 0, 8, 110, 8, 0) 
+p2 = Player2(692, 0, 8, 110, 8, 0) # Change the speed to 10 on Player vs AI for increased difficulty
 ball = Ball(WIDTH//2, HEIGHT//2, 15, [5, 5])
+
+ai = True # True for Player vs AI and False for Player vs Player
 
 clock = pygame.time.Clock()
 
@@ -72,12 +74,21 @@ while running:
     if keys[pygame.K_s]:
         if p1.y < 390:
             p1.y += p1.speed
-    if keys[pygame.K_UP]:
-        if p2.y > 0:
-            p2.y -= p2.speed
-    if keys[pygame.K_DOWN]:
-        if p2.y < 390:
-            p2.y += p2.speed
+    if ai:
+        if p2.y > ball.y:
+            if ball.v[0] > 0:
+                p2.y -= p2.speed
+        elif p2.y + p2.height < ball.y:
+            if ball.v[0] > 0:
+                p2.y += p2.speed
+
+    else:
+        if keys[pygame.K_UP]:
+            if p2.y > 0:
+                p2.y -= p2.speed
+        if keys[pygame.K_DOWN]:
+            if p2.y < 390:
+                p2.y += p2.speed
 
     if ball.y > p1.y and ball.y < p1.y + 110 and ball.x <= 8 and ball.x >= 0:
         if keys[pygame.K_SPACE] and not boosted:
@@ -96,7 +107,8 @@ while running:
         ball.y += ball.v[1]
 
     if ball.y > p2.y and ball.y < p2.y + 110 and ball.x >= 692 and ball.x <= WIDTH:
-        if keys[pygame.K_SPACE] and not boosted:
+        chance = random.choice([0, 1])
+        if chance == 0 and not boosted:
             ball.v[0] *= 2
             ball.v[1] *= 2
             boosted = True
