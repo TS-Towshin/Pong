@@ -2,13 +2,14 @@ import pygame
 import random
 import time
 
+
 pygame.init()
 
 collision_sound = pygame.mixer.Sound("collision.wav")
 win_sound = pygame.mixer.Sound("win.wav")
 
 # settings:
-ai = False # True for Player vs AI and False for Player vs Player
+ai = True # True for Player vs AI and False for Player vs Player
 player_speed = 10 # Change the speed to 10 on Player vs AI to increase the difficulty and 8 for medium difficulty.
 
 
@@ -65,7 +66,7 @@ boosted = False
 paused = False
 alpha = 255
 
-prev_time = pygame.time.get_ticks()
+
 
 while running:
     rect_player1 = pygame.Rect(p1.x, p1.y-15, p1.width, p1.height+30) # The value is increased because the radius of the ball is 15 and it would only register it as a collision if the center coordinate is the same as the player. And so the player would see that if the ball is still in touch with the player but in a corner, it would count as a miss.
@@ -137,30 +138,40 @@ while running:
 
         if rect_player2.collidepoint(ball.x+15, ball.y):
             if ai:
-                chance = random.choice([0, 1])
-                if chance == 0 and not boosted:
+                chance = random.randint(0, 1)
+                if bool(chance) and not boosted:
                     ball.v[0] *= 2
                     ball.v[1] *= 2
                     ball.color = (255, 0, 0)
                     pygame.draw.circle(screen, ball.color, (ball.x, ball.y), ball.r)
                     pygame.display.update()
                     boosted = True
-            if keys[pygame.K_SPACE] and not boosted:
-                ball.v[0] *= 2
-                ball.v[1] *= 2
-                ball.color = (255, 0, 0)
-                pygame.draw.circle(screen, ball.color, (ball.x, ball.y), ball.r)
-                pygame.display.update()
-                boosted = True
-            if keys[pygame.K_SPACE] and boosted:
-                pass
-            elif boosted:
-                ball.v[0] /= 2
-                ball.v[1] /= 2
-                ball.color = (255, 255, 255)
-                pygame.draw.circle(screen, ball.color, (ball.x, ball.y), ball.r)
-                pygame.display.update()
-                boosted = False
+                elif bool(chance) and boosted:
+                    pass
+                elif boosted:
+                    ball.v[0] /= 2
+                    ball.v[1] /= 2
+                    ball.color = (255, 255, 255)
+                    pygame.draw.circle(screen, ball.color, (ball.x, ball.y), ball.r)
+                    pygame.display.update()
+                    boosted = False
+            else:
+                if keys[pygame.K_SPACE] and not boosted:
+                    ball.v[0] *= 2
+                    ball.v[1] *= 2
+                    ball.color = (255, 0, 0)
+                    pygame.draw.circle(screen, ball.color, (ball.x, ball.y), ball.r)
+                    pygame.display.update()
+                    boosted = True
+                if keys[pygame.K_SPACE] and boosted:
+                    pass
+                elif boosted:
+                    ball.v[0] /= 2
+                    ball.v[1] /= 2
+                    ball.color = (255, 255, 255)
+                    pygame.draw.circle(screen, ball.color, (ball.x, ball.y), ball.r)
+                    pygame.display.update()
+                    boosted = False
             ball.v[0] *= -1
             pygame.mixer.Sound.play(collision_sound)
             ball.x += ball.v[0]
