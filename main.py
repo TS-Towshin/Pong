@@ -232,7 +232,6 @@ while running:
     screen.blit(faded_message, (WIDTH//2-200, 2))
     if paused:
         screen.blit(shade_surface, (0, 0))
-        paused_message = font.render("PAUSED", True, (30, 50, 255))
         screen.blit(paused_screen, (WIDTH//2-230, HEIGHT//2-200))
         clock.tick(12) # This is for optimization. When we pause the game, we don't have to change
                        # any frames so its better to have as low fps as possible. But it will decrease
