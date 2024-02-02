@@ -24,16 +24,7 @@ shade_surface.set_alpha(TRANSPARENT_ALPHA)
 
 start = time.time()
 
-class Player1:
-    def __init__(self, x, y, width, height, speed, score):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-        self.speed = speed
-        self.score = score
-
-class Player2:
+class Player:
     def __init__(self, x, y, width, height, speed, score):
         self.x = x
         self.y = y
@@ -54,8 +45,8 @@ font = pygame.font.Font(None, 30)
 paused_font = pygame.font.Font(None, 100)
 paused_screen = pygame.image.load("paused_screen.png")
 
-p1 = Player1(0, 0, 8, 110, player_speed, 0) 
-p2 = Player2(692, 0, 8, 110, player_speed, 0)
+p1 = Player(0, 0, 8, 110, player_speed, 0) 
+p2 = Player(692, 0, 8, 110, player_speed, 0)
 ball = Ball(WIDTH//2, HEIGHT//2, 15, [5, 5], (255, 255, 255))
 
 def boost_ball():
